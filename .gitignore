@@ -1,0 +1,18 @@
+# Visual Studio
+.vs/
+*.user
+
+# Build output
+bin/
+obj/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets
+appsettings.json
+
+# Logs
+*.log
