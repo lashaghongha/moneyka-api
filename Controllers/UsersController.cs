@@ -21,7 +21,8 @@ public class UsersController(AppDbContext db) : ControllerBase
             {
                 DeviceId  = req.DeviceId,
                 Plan      = req.Plan ?? "free",
-                Name      = req.Name ?? "",
+                Name      = req.Name  ?? "",
+                Phone     = req.Phone ?? "",
                 FirstSeen = DateTime.UtcNow,
                 LastSeen  = DateTime.UtcNow
             };
@@ -31,7 +32,8 @@ public class UsersController(AppDbContext db) : ControllerBase
         {
             // Plan-ს არ ვეხებით — admin-მა შეიძლება შეცვალოს
             user.LastSeen = DateTime.UtcNow;
-            if (!string.IsNullOrEmpty(req.Name)) user.Name = req.Name;
+            if (!string.IsNullOrEmpty(req.Name))  user.Name  = req.Name;
+            if (!string.IsNullOrEmpty(req.Phone)) user.Phone = req.Phone;
         }
         await db.SaveChangesAsync();
         // Backend-ის plan-ს ვაბრუნებთ — frontend განაახლებს localStorage-ს
@@ -58,4 +60,5 @@ public class UsersController(AppDbContext db) : ControllerBase
     }
 }
 
-public record PingRequest(string DeviceId, string Plan, string? Name);
+public record PingRequest(string DeviceId, string Plan, string? Name, string? Phone);
+public record PlanRequest(string Plan);
