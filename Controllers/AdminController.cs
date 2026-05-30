@@ -62,6 +62,7 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
                 u.DeviceId,
                 u.Plan,
                 u.Name,
+                u.Phone,
                 firstSeen = u.FirstSeen,
                 lastSeen  = u.LastSeen
             })
