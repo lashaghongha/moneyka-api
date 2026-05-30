@@ -16,27 +16,28 @@ public class UsersController(AppDbContext db) : ControllerBase
         var user = await db.AppUsers.FirstOrDefaultAsync(u => u.DeviceId == req.DeviceId);
         if (user is null)
         {
-            // პირველი შესვლა — plan ლოკალურიდან
             user = new AppUser
             {
-                DeviceId  = req.DeviceId,
-                Plan      = req.Plan ?? "free",
-                Name      = req.Name  ?? "",
-                Phone     = req.Phone ?? "",
-                FirstSeen = DateTime.UtcNow,
-                LastSeen  = DateTime.UtcNow
+                DeviceId     = req.DeviceId,
+                Plan         = req.Plan ?? "free",
+                Name         = req.Name  ?? "",
+                Phone        = req.Phone ?? "",
+                PasswordHash = req.PasswordHash ?? "",
+                FirstSeen    = DateTime.UtcNow,
+                LastSeen     = DateTime.UtcNow
             };
             db.AppUsers.Add(user);
         }
         else
         {
-            // Plan-ს არ ვეხებით — admin-მა შეიძლება შეცვალოს
             user.LastSeen = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(req.Name))  user.Name  = req.Name;
             if (!string.IsNullOrEmpty(req.Phone)) user.Phone = req.Phone;
+            // პაროლი მხოლოდ ერთხელ ინახება — ცარიელია და ახალი მოვიდა
+            if (!string.IsNullOrEmpty(req.PasswordHash) && string.IsNullOrEmpty(user.PasswordHash))
+                user.PasswordHash = req.PasswordHash;
         }
         await db.SaveChangesAsync();
-        // Backend-ის plan-ს ვაბრუნებთ — frontend განაახლებს localStorage-ს
         return Ok(new { user.Plan });
     }
 
@@ -47,6 +48,20 @@ public class UsersController(AppDbContext db) : ControllerBase
         if (string.IsNullOrWhiteSpace(req.Phone)) return BadRequest();
         var exists = await db.AppUsers.AnyAsync(u => u.Phone == req.Phone);
         return Ok(new { exists });
+    }
+
+    // ტელეფონი + პაროლი → ანგარიშის აღდგენა
+    [HttpPost("login-password")]
+    public async Task<IActionResult> LoginWithPassword([FromBody] LoginPasswordRequest req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Phone) || string.IsNullOrWhiteSpace(req.PasswordHash))
+            return BadRequest();
+        var user = await db.AppUsers.FirstOrDefaultAsync(
+            u => u.Phone == req.Phone && u.PasswordHash == req.PasswordHash);
+        if (user is null) return Unauthorized(new { error = "invalid" });
+        user.LastSeen = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return Ok(new { user.Name, user.Plan, user.DeviceId, user.Phone });
     }
 
     // Plan-ის სინქრონიზაცია
@@ -69,5 +84,6 @@ public class UsersController(AppDbContext db) : ControllerBase
     }
 }
 
-public record PingRequest(string DeviceId, string Plan, string? Name, string? Phone);
+public record PingRequest(string DeviceId, string Plan, string? Name, string? Phone, string? PasswordHash);
 public record PhoneCheckRequest(string Phone);
+public record LoginPasswordRequest(string Phone, string PasswordHash);
