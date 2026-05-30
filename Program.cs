@@ -18,7 +18,13 @@ builder.Services.AddSingleton<OtpService>();
 
 builder.Services.AddCors(opt =>
     opt.AddDefaultPolicy(p =>
-        p.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:5175")
+        p.WithOrigins(
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5175",
+            "https://moneyka.vercel.app",
+            "https://moneyka-1yktrtduo-lashagongadze102-4608s-projects.vercel.app"
+         )
          .AllowAnyHeader()
          .AllowAnyMethod()));
 
