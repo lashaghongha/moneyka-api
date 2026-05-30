@@ -71,4 +71,3 @@ public class UsersController(AppDbContext db) : ControllerBase
 
 public record PingRequest(string DeviceId, string Plan, string? Name, string? Phone);
 public record PhoneCheckRequest(string Phone);
-public record PlanRequest(string Plan);
