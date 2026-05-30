@@ -40,6 +40,15 @@ public class UsersController(AppDbContext db) : ControllerBase
         return Ok(new { user.Plan });
     }
 
+    // ნომრის უნიკალობის შემოწმება
+    [HttpPost("check-phone")]
+    public async Task<IActionResult> CheckPhone([FromBody] PhoneCheckRequest req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Phone)) return BadRequest();
+        var exists = await db.AppUsers.AnyAsync(u => u.Phone == req.Phone);
+        return Ok(new { exists });
+    }
+
     // Plan-ის სინქრონიზაცია
     [HttpGet("{deviceId}/plan")]
     public async Task<IActionResult> GetPlan(string deviceId)
@@ -61,4 +70,5 @@ public class UsersController(AppDbContext db) : ControllerBase
 }
 
 public record PingRequest(string DeviceId, string Plan, string? Name, string? Phone);
+public record PhoneCheckRequest(string Phone);
 public record PlanRequest(string Plan);
