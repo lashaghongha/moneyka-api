@@ -10,7 +10,7 @@ namespace MoneyKa.Api.Controllers;
 [AdminAuth]
 public class AdminController(AppDbContext db, IConfiguration config) : ControllerBase
 {
-    private static readonly decimal[] Prices = [0m, 3.99m, 7.99m];
+    private static readonly decimal[] Prices = [0m, 2.99m, 4.99m];
     private static readonly string[] PlanNames = ["free", "pro", "elite"];
 
     // POST /api/admin/login  — key-ს ამოწმებს (filter უკვე ამოწმებს, ეს უბრალოდ confirm-ია)
@@ -32,8 +32,8 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
 
         var monthlyRevenue = users.Sum(u => u.Plan switch
         {
-            "pro"   => 3.99m,
-            "elite" => 7.99m,
+            "pro"   => 2.99m,
+            "elite" => 4.99m,
             _       => 0m
         });
 
