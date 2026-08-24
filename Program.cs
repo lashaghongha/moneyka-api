@@ -16,6 +16,12 @@ builder.Services.AddScoped<GroqService>();
 builder.Services.AddScoped<PushService>();
 builder.Services.AddSingleton<OtpService>();
 
+// Admin Hub SSO: hub-ticket validator + single-use replay guard, plus the local
+// httpOnly admin session minted after a ticket is consumed.
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<SsoService>();
+builder.Services.AddSingleton<AdminSessionService>();
+
 builder.Services.AddCors(opt =>
     opt.AddDefaultPolicy(p =>
         p.WithOrigins(
@@ -26,7 +32,11 @@ builder.Services.AddCors(opt =>
             "https://moneyka-1yktrtduo-lashagongadze102-4608s-projects.vercel.app"
          )
          .AllowAnyHeader()
-         .AllowAnyMethod()));
+         .AllowAnyMethod()
+         // Needed so the admin SPA's cross-origin cookie probe (checkSession) sends
+         // and receives the httpOnly admin_token cookie. Valid because origins are
+         // an explicit allowlist, not a wildcard.
+         .AllowCredentials()));
 
 // Swagger (Swashbuckle)
 builder.Services.AddEndpointsApiExplorer();
