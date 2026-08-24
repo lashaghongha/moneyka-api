@@ -12,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=moneyka.db"));
 
 builder.Services.AddScoped<AIService>();
-builder.Services.AddScoped<GroqService>();
+builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<PushService>();
 builder.Services.AddSingleton<OtpService>();
 

@@ -3,16 +3,16 @@ using System.Text.Json;
 
 namespace MoneyKa.Api.Services;
 
-public class GroqService(IHttpClientFactory httpClientFactory, IConfiguration config)
+public class OpenAIService(IHttpClientFactory httpClientFactory, IConfiguration config)
 {
-    private const string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
-    private const string Model  = "llama-3.3-70b-versatile"; // უფასო, უკეთესი ქართული
+    private const string ApiUrl = "https://api.openai.com/v1/chat/completions";
+    private const string Model  = "gpt-4o-mini";
 
     public async Task<string> GenerateAsync(string systemPrompt, string userPrompt)
     {
-        var apiKey = config["Groq:ApiKey"];
+        var apiKey = config["OpenAI:ApiKey"];
         if (string.IsNullOrEmpty(apiKey))
-            return "Groq API key არ არის კონფიგურირებული.";
+            return "OpenAI API key არ არის კონფიგურირებული.";
 
         var body = new
         {
@@ -43,7 +43,7 @@ public class GroqService(IHttpClientFactory httpClientFactory, IConfiguration co
             if (root.TryGetProperty("error", out var err))
             {
                 var msg = err.TryGetProperty("message", out var m) ? m.GetString() : "API შეცდომა";
-                return $"Groq შეცდომა: {msg}";
+                return $"AI შეცდომა: {msg}";
             }
 
             return root

@@ -5,7 +5,7 @@ namespace MoneyKa.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AIController(AIService ai, GroqService groq) : ControllerBase
+public class AIController(AIService ai, OpenAIService openAi) : ControllerBase
 {
     private const string SystemBase = "შენ ხარ MoneyKa-ს AI ფინანსური მრჩეველი. მომხმარებელი საქართველოდანაა და ლარში ხარჯავს. გასცე პრაქტიკული, პიროვნული, თბილი რჩევა ქართულ ენაზე. მოკლედ და ნათლად. გამოიყენე ემოჯი. პასუხი არ უნდა იყოს 5 წინადადებაზე მეტი.";
 
@@ -16,7 +16,7 @@ public class AIController(AIService ai, GroqService groq) : ControllerBase
         var system  = "You are a personal finance advisor. Always respond in Georgian language only. No markdown, no asterisks. Give exactly 3 tips, each on a new line starting with emoji. Be short, direct, reference actual numbers. Use informal შენ.";
         var user    = $"My spending this month: {summary}. Total spent: {req.TotalSpend}₾. Income: {req.Income}₾. Give me 3 concrete tips in Georgian.";
 
-        var result = await groq.GenerateAsync(system, user);
+        var result = await openAi.GenerateAsync(system, user);
         return Ok(new { text = result });
     }
 
@@ -28,7 +28,7 @@ public class AIController(AIService ai, GroqService groq) : ControllerBase
 
         // last user message
         var lastMsg = req.Messages.LastOrDefault(m => m.Role == "user")?.Content ?? "";
-        var result  = await groq.GenerateAsync(system, lastMsg);
+        var result  = await openAi.GenerateAsync(system, lastMsg);
         return Ok(new { text = result });
     }
 
@@ -45,7 +45,7 @@ My last 30 days spending: total {req.TotalSpend:F2}₾. Categories: {catSummary}
 Give me 3 specific, concrete tips in Georgian. Each tip = 1 short sentence. Start each with emoji.
 """;
 
-        var result = await groq.GenerateAsync(system, user);
+        var result = await openAi.GenerateAsync(system, user);
         return Ok(new { text = result });
     }
 }
