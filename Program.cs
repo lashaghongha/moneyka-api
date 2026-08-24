@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MoneyKa.Api.Data;
@@ -51,6 +52,20 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Honor X-Forwarded-Proto/-For from the hosting proxy (Railway terminates TLS
+// and forwards plain HTTP to the app). Without this, Request.IsHttps is false in
+// production, so the SSO admin cookie is issued as SameSite=Lax without Secure —
+// which the browser then refuses to send on cross-site calls from the Vercel
+// admin frontend, so the SSO login silently fails. Railway is the sole ingress,
+// so the proxy list is cleared to trust the forwarded headers. MUST run first.
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+};
+forwardedOptions.KnownNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedOptions);
 
 // Auto-migrate on startup
 using (var scope = app.Services.CreateScope())
