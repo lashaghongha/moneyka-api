@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<UserPlan> UserPlans => Set<UserPlan>();
     public DbSet<AppUser> AppUsers => Set<AppUser>();
+    public DbSet<UserSync> UserSyncs => Set<UserSync>();
     public DbSet<PushSub> PushSubs => Set<PushSub>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,5 +51,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<UserPlan>().HasData(
             new UserPlan { Id = 1, Plan = "free", UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
         );
+
+        // UserSync: DeviceId is the primary key (one row per device)
+        modelBuilder.Entity<UserSync>()
+            .HasKey(s => s.DeviceId);
     }
 }
