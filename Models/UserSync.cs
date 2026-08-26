@@ -2,7 +2,8 @@ namespace MoneyKa.Api.Models;
 
 public class UserSync
 {
-    public string DeviceId        { get; set; } = "";
+    public string DeviceId         { get; set; } = "";
+    public string DeviceSecret     { get; set; } = "";   // HMAC secret per device
     public string TransactionsJson { get; set; } = "[]";
     public string GoalsJson        { get; set; } = "[]";
     public string SubsJson         { get; set; } = "[]";
