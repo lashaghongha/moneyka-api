@@ -52,10 +52,10 @@ public class AIController(AIService ai, OpenAIService openAi) : ControllerBase
     public async Task<IActionResult> Chat([FromBody] ChatRequest req)
     {
         var context = BuildContext(req);
-        var system  = $"შენ ხარ MoneyKa-ს AI ფინანსური მრჩეველი. ყოველთვის პასუხობ მხოლოდ ქართულ ენაზე. გამოიყენე მხოლოდ ქვემოთ მოცემული მონაცემები კითხვებზე პასუხისთვის. No markdown. Be short and practical. Use informal შენ.\n\nმომხმარებლის ფინანსური მონაცემები:\n{context}";
+        var system  = $"შენ ხარ MoneyKa-ს AI ფინანსური მრჩეველი. ყოველთვის პასუხობ მხოლოდ ქართულ ენაზე. გამოიყენე ქვემოთ მოცემული მონაცემები კითხვებზე პასუხისთვის. No markdown, no asterisks. Be short and practical. Use informal შენ.\n\nმომხმარებლის ფინანსური მონაცემები:\n{context}";
 
-        var lastMsg = req.Messages.LastOrDefault(m => m.Role == "user")?.Content ?? "";
-        var result  = await openAi.GenerateAsync(system, lastMsg);
+        // სრული conversation history — AI-ს ახსოვს წინა პასუხები
+        var result = await openAi.GenerateWithHistoryAsync(system, req.Messages);
         return Ok(new { text = result });
     }
 

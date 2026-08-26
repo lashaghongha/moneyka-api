@@ -8,23 +8,24 @@ public class OpenAIService(IHttpClientFactory httpClientFactory, IConfiguration 
     private const string ApiUrl = "https://api.openai.com/v1/chat/completions";
     private const string Model  = "gpt-4o-mini";
 
-    public async Task<string> GenerateAsync(string systemPrompt, string userPrompt)
+    // ერთი user→assistant გაცვლა (advice, habits)
+    public Task<string> GenerateAsync(string systemPrompt, string userPrompt) =>
+        CallOpenAI(systemPrompt, new[] { new { role = "user", content = userPrompt } });
+
+    // სრული conversation history (chat)
+    public Task<string> GenerateWithHistoryAsync(string systemPrompt, IEnumerable<AIMessage> history) =>
+        CallOpenAI(systemPrompt, history.Select(m => new { role = m.Role, content = m.Content }));
+
+    private async Task<string> CallOpenAI(string systemPrompt, IEnumerable<object> userMessages)
     {
         var apiKey = config["OpenAI:ApiKey"];
         if (string.IsNullOrEmpty(apiKey))
             return "OpenAI API key არ არის კონფიგურირებული.";
 
-        var body = new
-        {
-            model = Model,
-            messages = new[]
-            {
-                new { role = "system", content = systemPrompt },
-                new { role = "user",   content = userPrompt   }
-            },
-            temperature = 0.7,
-            max_tokens  = 600
-        };
+        var messages = new List<object> { new { role = "system", content = systemPrompt } };
+        messages.AddRange(userMessages);
+
+        var body = new { model = Model, messages, temperature = 0.7, max_tokens = 600 };
 
         var client = httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
