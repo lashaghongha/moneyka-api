@@ -8,6 +8,8 @@ public class AppUser
     public string Name         { get; set; } = "";
     public string Phone        { get; set; } = "";
     public string PasswordHash { get; set; } = "";
-    public DateTime FirstSeen { get; set; } = DateTime.UtcNow;
-    public DateTime LastSeen  { get; set; } = DateTime.UtcNow;
+    public DateTime FirstSeen      { get; set; } = DateTime.UtcNow;
+    public DateTime LastSeen       { get; set; } = DateTime.UtcNow;
+    // true = მომხმარებელმა რეალურად გადაიხადა; false = ადმინმა ხელით მიანიჭა
+    public bool IsPaidCustomer { get; set; } = false;
 }

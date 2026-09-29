@@ -30,12 +30,15 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
             count = users.Count(u => u.Plan == p)
         }).ToList();
 
-        var monthlyRevenue = users.Sum(u => u.Plan switch
-        {
-            "pro"   => 2.99m,
-            "elite" => 4.99m,
-            _       => 0m
-        });
+        // მხოლოდ რეალური გადამხდელები — ადმინ-მინიჭებულები არ ითვლება
+        var monthlyRevenue = users
+            .Where(u => u.IsPaidCustomer)
+            .Sum(u => u.Plan switch
+            {
+                "pro"   => 2.99m,
+                "elite" => 4.99m,
+                _       => 0m
+            });
 
         var newThisWeek  = users.Count(u => u.FirstSeen >= now.AddDays(-7));
         var activeToday  = users.Count(u => u.LastSeen  >= now.AddDays(-1));
@@ -63,6 +66,7 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
                 u.Plan,
                 u.Name,
                 u.Phone,
+                u.IsPaidCustomer,
                 firstSeen = u.FirstSeen,
                 lastSeen  = u.LastSeen
             })
@@ -81,6 +85,17 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
         return Ok(new { user.Id, user.Plan });
     }
 
+    // PUT /api/admin/users/{id}/paid  — გადამხდელის სტატუსის შეცვლა
+    [HttpPut("users/{id}/paid")]
+    public async Task<IActionResult> SetPaid(int id, [FromBody] AdminPaidRequest req)
+    {
+        var user = await db.AppUsers.FindAsync(id);
+        if (user is null) return NotFound();
+        user.IsPaidCustomer = req.IsPaidCustomer;
+        await db.SaveChangesAsync();
+        return Ok(new { user.Id, user.IsPaidCustomer });
+    }
+
     // DELETE /api/admin/users/{id}
     [HttpDelete("users/{id}")]
     public async Task<IActionResult> DeleteUser(int id)
@@ -94,3 +109,4 @@ public class AdminController(AppDbContext db, IConfiguration config) : Controlle
 }
 
 public record AdminPlanRequest(string Plan);
+public record AdminPaidRequest(bool IsPaidCustomer);
