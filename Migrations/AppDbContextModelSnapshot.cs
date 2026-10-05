@@ -28,13 +28,13 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FirstSeen")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsPaidCustomer")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastSeen")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -72,10 +72,10 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Saved")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("Target")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -126,7 +126,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -152,7 +152,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Billing")
                         .IsRequired()
@@ -179,7 +179,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -255,7 +255,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -273,7 +273,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Recurring")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Time")
                         .IsRequired()
@@ -437,7 +437,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -478,7 +478,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("DeviceId");
 

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MoneyKa.Api.Models;
 
 public class PushSub
@@ -7,5 +9,5 @@ public class PushSub
     public string Endpoint { get; set; } = "";
     public string P256dh   { get; set; } = "";
     public string Auth     { get; set; } = "";
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [Column(TypeName = "timestamp with time zone")] public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

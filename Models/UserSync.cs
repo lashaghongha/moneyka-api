@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MoneyKa.Api.Models;
 
 public class UserSync
@@ -8,5 +10,5 @@ public class UserSync
     public string GoalsJson        { get; set; } = "[]";
     public string SubsJson         { get; set; } = "[]";
     public string BudgetsJson      { get; set; } = "{}";
-    public DateTime UpdatedAt      { get; set; } = DateTime.UtcNow;
+    [Column(TypeName = "timestamp with time zone")] public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

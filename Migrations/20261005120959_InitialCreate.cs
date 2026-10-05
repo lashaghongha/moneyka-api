@@ -14,6 +14,26 @@ namespace MoneyKa.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AppUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DeviceId = table.Column<string>(type: "TEXT", nullable: false),
+                    Plan = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsPaidCustomer = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Goals",
                 columns: table => new
                 {
@@ -21,13 +41,30 @@ namespace MoneyKa.Api.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Icon = table.Column<string>(type: "TEXT", nullable: false),
-                    Target = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Saved = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Target = table.Column<decimal>(type: "numeric", nullable: false),
+                    Saved = table.Column<decimal>(type: "numeric", nullable: false),
                     Color = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Goals", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PushSubs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DeviceId = table.Column<string>(type: "TEXT", nullable: false),
+                    Endpoint = table.Column<string>(type: "TEXT", nullable: false),
+                    P256dh = table.Column<string>(type: "TEXT", nullable: false),
+                    Auth = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PushSubs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -39,11 +76,11 @@ namespace MoneyKa.Api.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Icon = table.Column<string>(type: "TEXT", nullable: false),
                     Color = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Billing = table.Column<string>(type: "TEXT", nullable: false),
                     Category = table.Column<string>(type: "TEXT", nullable: false),
                     NextDate = table.Column<string>(type: "TEXT", nullable: false),
-                    Active = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Active = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,11 +95,11 @@ namespace MoneyKa.Api.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Category = table.Column<string>(type: "TEXT", nullable: false),
                     Desc = table.Column<string>(type: "TEXT", nullable: false),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     Date = table.Column<string>(type: "TEXT", nullable: false),
                     Time = table.Column<string>(type: "TEXT", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: false),
-                    Recurring = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Recurring = table.Column<bool>(type: "boolean", nullable: false),
                     RecFreq = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -77,11 +114,28 @@ namespace MoneyKa.Api.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Plan = table.Column<string>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserPlans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSyncs",
+                columns: table => new
+                {
+                    DeviceId = table.Column<string>(type: "TEXT", nullable: false),
+                    DeviceSecret = table.Column<string>(type: "TEXT", nullable: false),
+                    TransactionsJson = table.Column<string>(type: "TEXT", nullable: false),
+                    GoalsJson = table.Column<string>(type: "TEXT", nullable: false),
+                    SubsJson = table.Column<string>(type: "TEXT", nullable: false),
+                    BudgetsJson = table.Column<string>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSyncs", x => x.DeviceId);
                 });
 
             migrationBuilder.InsertData(
@@ -135,7 +189,13 @@ namespace MoneyKa.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AppUsers");
+
+            migrationBuilder.DropTable(
                 name: "Goals");
+
+            migrationBuilder.DropTable(
+                name: "PushSubs");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
@@ -145,6 +205,9 @@ namespace MoneyKa.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserPlans");
+
+            migrationBuilder.DropTable(
+                name: "UserSyncs");
         }
     }
 }

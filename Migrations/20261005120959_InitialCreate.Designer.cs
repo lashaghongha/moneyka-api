@@ -11,8 +11,8 @@ using MoneyKa.Api.Data;
 namespace MoneyKa.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260530220559_AddPasswordHash")]
-    partial class AddPasswordHash
+    [Migration("20261005120959_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,10 +31,13 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FirstSeen")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPaidCustomer")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastSeen")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -72,10 +75,10 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Saved")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("Target")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -126,7 +129,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -152,7 +155,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Billing")
                         .IsRequired()
@@ -179,7 +182,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -255,7 +258,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -273,7 +276,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Recurring")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Time")
                         .IsRequired()
@@ -437,7 +440,7 @@ namespace MoneyKa.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -450,6 +453,39 @@ namespace MoneyKa.Api.Migrations
                             Plan = "free",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
+                });
+
+            modelBuilder.Entity("MoneyKa.Api.Models.UserSync", b =>
+                {
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BudgetsJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceSecret")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GoalsJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubsJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TransactionsJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("DeviceId");
+
+                    b.ToTable("UserSyncs");
                 });
 #pragma warning restore 612, 618
         }
