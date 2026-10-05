@@ -15,7 +15,7 @@ if (!string.IsNullOrEmpty(databaseUrl))
     // Railway injects DATABASE_URL as a postgres:// URI — convert to Npgsql connection string
     var uri = new Uri(databaseUrl);
     var userInfo = uri.UserInfo.Split(':');
-    var npgsqlConn = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    var npgsqlConn = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Disable";
     builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(npgsqlConn));
 }
 else
